@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENATI - Ejercicio 4: Día de la Semana</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --workday-color: #3b82f6;
+      --weekend-color: #f59e0b;
+      --danger: #ef4444;
+      --input-bg: #090d16;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 360px 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .quick-select-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .quick-buttons {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-quick {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.6rem 0;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-quick:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-quick.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    button.btn-action {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button.btn-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    .day-display-box {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s ease;
+    }
+
+    .day-display-box.type-workday {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(15, 23, 42, 0.9));
+    }
+
+    .day-display-box.type-weekend {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(15, 23, 42, 0.9));
+    }
+
+    .day-icon {
+      font-size: 3.5rem;
+      line-height: 1;
+      margin: 0.5rem 0;
+      transition: transform 0.3s;
+    }
+
+    .day-display-box:hover .day-icon {
+      transform: scale(1.1);
+    }
+
+    .day-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 0.25rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+    }
+
+    .badge-neutral {
+      background-color: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-workday {
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid var(--workday-color);
+    }
+
+    .badge-weekend {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+      border: 1px solid var(--weekend-color);
+    }
+
+    .details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+    }
+
+    .detail-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .detail-val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-danger {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SENATI - Algoritmos y Programación</h1>
+    <p>Práctica Dirigida Nivel 1 • Ejercicio 04: Día de la Semana</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Panel Izquierdo: Formulario -->
+    <div class="card">
+      <h2>📅 Ingreso de Número</h2>
+      <form id="dayForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="dayInput">Número del Día (1 - 7):</label>
+          <input type="number" id="dayInput" min="1" max="7" placeholder="Ej. 1" autocomplete="off" autofocus>
+        </div>
+
+        <span class="quick-select-label">Selección rápida:</span>
+        <div class="quick-buttons">
+          <button type="button" class="btn-quick" data-num="1">1</button>
+          <button type="button" class="btn-quick" data-num="2">2</button>
+          <button type="button" class="btn-quick" data-num="3">3</button>
+          <button type="button" class="btn-quick" data-num="4">4</button>
+          <button type="button" class="btn-quick" data-num="5">5</button>
+          <button type="button" class="btn-quick" data-num="6">6</button>
+          <button type="button" class="btn-quick" data-num="7">7</button>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-action btn-primary" id="btnDeterminar">Determinar Día</button>
+          <button type="button" class="btn-action btn-secondary" id="btnLimpiar">Limpiar</button>
+        </div>
+      </form>
+
+      <div id="alertBox" class="alert alert-danger"></div>
+    </div>
+
+    <!-- Panel Derecho: Resultados -->
+    <div class="card">
+      <h2>📊 Resultado del Análisis</h2>
+      
+      <div class="day-display-box" id="displayBox">
+        <span class="badge badge-neutral" id="typeBadge">Esperando Selección</span>
+        <div class="day-icon" id="dayIcon">❓</div>
+        <div class="day-name" id="dayName">--</div>
+      </div>
+
+      <div class="details-list">
+        <div class="detail-item">
+          <span class="detail-label">Clasificación</span>
+          <span class="detail-val" id="detailCategory">--</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Orden en la semana</span>
+          <span class="detail-val" id="detailOrder">--</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Siguiente día</span>
+          <span class="detail-val" id="detailNext">--</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Cuenta para Fin de Semana</span>
+          <span class="detail-val" id="detailCountdown">--</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Definición de datos de los días de la semana
+      const DAYS_DATA = {
+        1: { name: 'Lunes', icon: '💼', type: 'workday', typeText: 'Día Laborable', order: '1.º día', next: 'Martes', countdown: '4 días para el fin de semana' },
+        2: { name: 'Martes', icon: '📊', type: 'workday', typeText: 'Día Laborable', order: '2.º día', next: 'Miércoles', countdown: '3 días para el fin de semana' },
+        3: { name: 'Miércoles', icon: '📈', type: 'workday', typeText: 'Día Laborable', order: '3.º día', next: 'Jueves', countdown: '2 días para el fin de semana' },
+        4: { name: 'Jueves', icon: '💻', type: 'workday', typeText: 'Día Laborable', order: '4.º día', next: 'Viernes', countdown: '1 día para el fin de semana' },
+        5: { name: 'Viernes', icon: '🚀', type: 'workday', typeText: 'Día Laborable', order: '5.º día', next: 'Sábado', countdown: '¡Mañana empieza el fin de semana!' },
+        6: { name: 'Sábado', icon: '🎯', type: 'weekend', typeText: 'Fin de Semana', order: '6.º día', next: 'Domingo', countdown: '¡Es fin de semana! 🎉' },
+        7: { name: 'Domingo', icon: '🌴', type: 'weekend', typeText: 'Fin de Semana', order: '7.º día', next: 'Lunes', countdown: '¡Es fin de semana! 🎉' }
+      };
+
+      // Referencias DOM
+      const dayInput = document.getElementById('dayInput');
+      const btnDeterminar = document.getElementById('btnDeterminar');
+      const btnLimpiar = document.getElementById('btnLimpiar');
+      const quickBtns = document.querySelectorAll('.btn-quick');
+
+      const displayBox = document.getElementById('displayBox');
+      const typeBadge = document.getElementById('typeBadge');
+      const dayIcon = document.getElementById('dayIcon');
+      const dayName = document.getElementById('dayName');
+
+      const detailCategory = document.getElementById('detailCategory');
+      const detailOrder = document.getElementById('detailOrder');
+      const detailNext = document.getElementById('detailNext');
+      const detailCountdown = document.getElementById('detailCountdown');
+
+      const alertBox = document.getElementById('alertBox');
+
+      function showError(msg) {
+        if (msg) {
+          alertBox.textContent = msg;
+          alertBox.classList.add('show');
+        } else {
+          alertBox.classList.remove('show');
+        }
+      }
+
+      function updateQuickButtons(activeNum) {
+        quickBtns.forEach(btn => {
+          if (parseInt(btn.dataset.num) === activeNum) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      }
+
+      function evaluarDia() {
+        const val = dayInput.value.trim();
+
+        if (val === '') {
+          showError('Por favor ingrese un número del 1 al 7.');
+          return;
+        }
+
+        const num = Number(val);
+
+        if (!Number.isInteger(num) || num < 1 || num > 7) {
+          showError('Número fuera de rango. Debe ser un número entero del 1 al 7.');
+          return;
+        }
+
+        showError(null);
+        updateQuickButtons(num);
+
+        const data = DAYS_DATA[num];
+
+        // Actualización de UI
+        dayName.textContent = data.name;
+        dayIcon.textContent = data.icon;
+        detailCategory.textContent = data.typeText;
+        detailOrder.textContent = data.order;
+        detailNext.textContent = data.next;
+        detailCountdown.textContent = data.countdown;
+
+        displayBox.classList.remove('type-workday', 'type-weekend');
+
+        if (data.type === 'workday') {
+          displayBox.classList.add('type-workday');
+          typeBadge.textContent = 'DÍA LABORABLE';
+          typeBadge.className = 'badge badge-workday';
+        } else {
+          displayBox.classList.add('type-weekend');
+          typeBadge.textContent = 'FIN DE SEMANA';
+          typeBadge.className = 'badge badge-weekend';
+        }
+      }
+
+      function limpiar() {
+        dayInput.value = '';
+        showError(null);
+        updateQuickButtons(null);
+
+        displayBox.classList.remove('type-workday', 'type-weekend');
+        typeBadge.textContent = 'Esperando Selección';
+        typeBadge.className = 'badge badge-neutral';
+
+        dayIcon.textContent = '❓';
+        dayName.textContent = '--';
+
+        detailCategory.textContent = '--';
+        detailOrder.textContent = '--';
+        detailNext.textContent = '--';
+        detailCountdown.textContent = '--';
+
+        dayInput.focus();
+      }
+
+      btnDeterminar.addEventListener('click', evaluarDia);
+      btnLimpiar.addEventListener('click', limpiar);
+
+      quickBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          dayInput.value = btn.dataset.num;
+          evaluarDia();
+        });
+      });
+
+      dayInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          evaluarDia();
+        } else {
+          const val = parseInt(dayInput.value);
+          if (val >= 1 && val <= 7) {
+            evaluarDia();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
